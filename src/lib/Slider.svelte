@@ -5,6 +5,7 @@
     value: number
     min?: number
     max: number
+    step?: number
     tickInterval?: number
   }
 
@@ -13,6 +14,7 @@
     value = $bindable(),
     min = 0,
     max,
+    step = 1,
     tickInterval,
   }: Props = $props()
 
@@ -30,7 +32,8 @@
       axis: "x",
       bounds: "parent",
       onDrag: ({ currentNode }) => {
-        value = Math.round(currentNode.offsetLeft / TOTAL_WIDTH * range + min)
+        const rawValue = min + (currentNode.offsetLeft / TOTAL_WIDTH * range)
+        value = Math.round(rawValue / step) * step
       },
       transform: ({ offsetX, rootNode }) => {
         rootNode.style.left = `${offsetX}px`;
