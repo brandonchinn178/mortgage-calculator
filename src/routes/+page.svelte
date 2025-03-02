@@ -19,13 +19,14 @@
   // TODO: move to state
   const loanTermYears = 30
 
-  //  M = P * (J/(1-(1+J) ** -N))
-
   // https://www.hughcalc.org/formula.php
   // TODO: allow making input, with down payment as output
   const loanAmount = $derived(data.totalHouse * (1 - data.downPaymentPercent / 100))
   const monthlyInterest = $derived((data.interestRatePercent / 100) / 12)
-  const monthlyPayment = $derived(loanAmount * monthlyInterest / (1 - (1 + monthlyInterest) ** -(loanTermYears * 12)))
+  const monthlyPayment = $derived.by(() => {
+    const payment = loanAmount * monthlyInterest / (1 - (1 + monthlyInterest) ** -(loanTermYears * 12))
+    return isNaN(payment) ? 0 : payment
+  })
 
   // TODO: allow user to specify downpayment in either dollar or percent
 
@@ -105,7 +106,7 @@
       <input
         id="monthly-payment"
         type="number"
-        value={monthlyPayment}
+        value={monthlyPayment.toFixed(2)}
         disabled
       />
     </div>
